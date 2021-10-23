@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                         new TextFormField(
                           //keyboardType: TextInputType.emailAddress,
                           onSaved: (input) => requestModel.email = input,
-                          validator: EmailValidator(errorText: 'Salah gila'),
+                          validator: MultiValidator([EmailValidator(errorText: 'Salah gila'),RequiredValidator(errorText: ('Perlu email mas'))]),
                           decoration: new InputDecoration(
                             hintText: "Email Address",
                             enabledBorder: UnderlineInputBorder(
