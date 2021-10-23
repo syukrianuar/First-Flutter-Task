@@ -14,6 +14,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Login Screen',
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+        primaryColor: Colors.white,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          
+        )
+      ),
       home: LoginPage(),
     );
   }

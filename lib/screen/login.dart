@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertraining/model/login_model.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({ Key? key }) : super(key: key);
@@ -8,13 +10,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isObsecure=true;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState>globalFormKey = new GlobalKey<FormState>();
+  final passwordValidator = MultiValidator(
+    [RequiredValidator(errorText: 'password is required'),
+    MinLengthValidator(8, errorText: 'password 8 setan'),]
+  );
+  late LoginRequestModel requestModel;
+  @override
+  void initState(){
+    super.initState();
+    requestModel = new LoginRequestModel();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Theme.of(context).accentColor,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -44,8 +57,65 @@ class _LoginPageState extends State<LoginPage> {
                           style: Theme.of(context).textTheme.headline2
                         ),
                         SizedBox(height: 20,),
-                        TextFormField(
-                          keyboardType: TextInputType.emailAddress,
+                        new TextFormField(
+                          //keyboardType: TextInputType.emailAddress,
+                          onSaved: (input) => requestModel.email = input,
+                          validator: EmailValidator(errorText: 'Salah gila'),
+                          decoration: new InputDecoration(
+                            hintText: "Email Address",
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context)
+                                .accentColor
+                                .withOpacity(0.2),
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).accentColor,
+                              ),
+                            ),
+                            prefixIcon: Icon(Icons.email,
+                            color: Theme.of(context).accentColor)),
+                        ),
+                        new TextFormField(
+                          obscureText: _isObsecure,
+                          //keyboardType: TextInputType.emailAddress,
+                          onSaved: (input) => requestModel.password = input,
+                          validator: passwordValidator,
+                          decoration: new InputDecoration(
+                            hintText: "Password",
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context)
+                                .accentColor
+                                .withOpacity(0.2),
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).accentColor,
+                              ),
+                            ),
+                            prefixIcon: Icon(Icons.password,
+                            color: Theme.of(context).accentColor)),
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        FlatButton(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 80,
+                          ),
+                          onPressed: (){
+                            if(validateAndSave()){
+                              print(requestModel.tojson());
+                            }
+                          },
+                          child: Text('Login', style: TextStyle(color: Colors.white),),
+                          color: Theme.of(context).accentColor,
+                          shape: StadiumBorder(),
                         ),
                       ],
                     ),
@@ -58,5 +128,14 @@ class _LoginPageState extends State<LoginPage> {
       ),
       
     );
+  }
+
+  bool validateAndSave(){
+    final form = globalFormKey.currentState;
+    if(form!.validate()){
+      form.save();
+      return true;
+    }
+    return false;
   }
 }
